@@ -112,6 +112,12 @@ ols_results = lr_ols_model(df, 'dependent_var', ['independent_var1', 'independen
 - seaborn >= 0.11.0
 - scipy >= 1.7.0
 - statsmodels >= 0.12.0
+- plotly >- 5.0.0
+
+You can simply do:
+```bash
+pip install -r requirements/requirements-core.txt
+```
 
 ### Testing Dependencies
 For running tests, you'll need to install additional packages:
