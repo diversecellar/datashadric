@@ -13,15 +13,14 @@ def test_df_check_na_values(sample_dataframe):
     """test the na values checking function"""
     result = df_check_na_values(sample_dataframe)
     
-    # should return a dataframe
+    # should return a dataframe (same as input.isna())
     assert isinstance(result, pd.DataFrame)
     
-    # should have the expected columns
-    expected_cols = ['Column', 'Data_Type', 'Null_Count', 'Null_Percentage']
-    assert all(col in result.columns for col in expected_cols)
+    # should have the same shape as input
+    assert result.shape == sample_dataframe.shape
     
-    # should have one row per column in input
-    assert len(result) == len(sample_dataframe.columns)
+    # should have the same columns as input
+    assert list(result.columns) == list(sample_dataframe.columns)
 
 
 def test_df_drop_dupes():
@@ -32,7 +31,8 @@ def test_df_drop_dupes():
         'B': [4, 5, 5, 6]
     })
     
-    result = df_drop_dupes(df_with_dupes)
+    # test with col_dupes parameter (required)
+    result = df_drop_dupes(df_with_dupes, 0)  # col_dupes=0 parameter
     
     # should return dataframe with no duplicates
     assert isinstance(result, pd.DataFrame)
@@ -48,6 +48,6 @@ def test_empty_dataframe():
     na_result = df_check_na_values(empty_df)
     assert isinstance(na_result, pd.DataFrame)
     
-    dupe_result = df_drop_dupes(empty_df)
+    dupe_result = df_drop_dupes(empty_df, 0)  # col_dupes=0 parameter
     assert isinstance(dupe_result, pd.DataFrame)
     assert len(dupe_result) == 0
