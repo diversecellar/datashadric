@@ -23,7 +23,7 @@ Basic Usage:
 >>> from datashadric.plotters import df_boxplotter
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Paul Namlaomba (GitHub: diversecellar)"
 __email__ = "kabwenzenamalomba@gmail.com"
 
