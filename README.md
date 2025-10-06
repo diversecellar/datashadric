@@ -210,3 +210,9 @@ If you encounter any problems or have questions, please file an issue on the [Gi
 - Additional functions for outlier detection
 - Additional functions for plotting (LOWESS meanline plotter)
 - Additional functions for data clustering based on k-means
+
+### Version: 0.1.2
+### Release Date: 6 October 2025
+- Enhanced dataframe utilities
+- New functions for index and column name retrieval
+- Improved documentation and examples
