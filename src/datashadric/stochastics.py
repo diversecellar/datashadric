@@ -8,6 +8,7 @@ Comprehensive collection of statistical analysis utilities for hypothesis testin
 import calendar as cal
 
 # third-party data science imports
+import datashadric
 import pandas as pd
 import numpy as np
 from scipy import stats
@@ -112,6 +113,7 @@ def df_residual_analysis(df_name, col_actual, col_predicted):
     
     return df_name['residuals']
 
+
 def df_vif_calculation(df_name, col_list: list):
     """calculate Variance Inflation Factor (VIF) for multicollinearity check"""
     # usage: df_vif_calculation(df, ['col1', 'col2', 'col3'])
@@ -124,6 +126,7 @@ def df_vif_calculation(df_name, col_list: list):
 
     return vif_data
 
+
 def df_tukey_hsd(df_name, col_group, col_value, alpha=0.05):
     """perform Tukey's HSD test for multiple comparisons"""
     # usage: df_tukey_hsd(df, 'group_col', 'value_col', alpha=0.05)
@@ -133,6 +136,7 @@ def df_tukey_hsd(df_name, col_group, col_value, alpha=0.05):
     print(tukey.summary())
     
     return tukey
+
 
 def df_anova_oneway(df_name, col_group, col_value):
     """perform one-way ANOVA test"""
@@ -146,6 +150,7 @@ def df_anova_oneway(df_name, col_group, col_value):
     
     return f_stat, p_value
 
+
 def df_anova_twoway(df_name, col_factor1, col_factor2, col_value):
     """perform two-way ANOVA test"""
     # usage: df_anova_twoway(df, 'factor1_col', 'factor2_col', 'value_col')
@@ -157,6 +162,7 @@ def df_anova_twoway(df_name, col_factor1, col_factor2, col_value):
     print(anova_table)
     
     return anova_table
+
 
 def df_chi_square_test(df_name, col1, col2):
     """perform Chi-Square test of independence"""
@@ -170,6 +176,7 @@ def df_chi_square_test(df_name, col1, col2):
     
     return chi2_stat, p_value, dof, expected
 
+
 def df_residual_based_filtering(df_name, col_actual, col_predicted, threshold):
     """filter data based on residuals"""
     # usage: df_residual_based_filtering(df, 'actual_col', 'predicted_col', threshold=2.0)
@@ -179,3 +186,73 @@ def df_residual_based_filtering(df_name, col_actual, col_predicted, threshold):
     filtered_df = df_name[np.abs(df_name['residuals']) <= threshold]
     
     return filtered_df
+
+
+def df_zscore_based_filtering(df_name, x_col, y_col, z_threshold=1.5):
+    """filter data based on Z-scores of two columns"""
+    # usage: df_zscore_based_filtering(df, 'x_col', 'y_col', z_threshold=1.5)
+    # input: df_name - pandas DataFrame, x_col - first numerical column name, y_col - second numerical column name, z_threshold - Z-score threshold
+    # output: filtered DataFrame with Z-scores within the threshold for both columns
+    data = df_name[[x_col, y_col]].dropna()
+    z_scores = stats.zscore(data)
+    
+    # Filter by Z-score of x_col only (first column of z_scores)
+    mask = z_scores[:, 0] < z_threshold  # Only use x_col Z-scores for filtering
+    filtered_df = data[mask]
+    
+    return filtered_df, z_scores
+
+
+def df_plot_zscores(df, z_scores, x_col, y_col, *save_path):
+    """plot Z-scores for two columns"""
+    # usage: df_plot_zscores(df, z_scores, 'x_col', 'y_col')
+    # or df_plot_zscores(df, z_scores, 'x_col', 'y_col', 'save_path.png')
+    # input: df - original pandas DataFrame, z_scores - array of Z-scores, x_col - first numerical column name, y_col - second numerical column name, save_path - optional path to save the plot
+    # output: scatter plot of Z-scores for both columns
+    plt.figure(figsize=(10, 6))
+    plt.scatter(df.index, z_scores[:, 0], label=f'Z-scores {x_col}', alpha=0.5)
+    plt.scatter(df.index, z_scores[:, 1], label=f'Z-scores {y_col}', alpha=0.5)
+    plt.axhline(0, color='black', linestyle='--', linewidth=1)
+    plt.axhline(1.5, color='red', linestyle='--', linewidth=1, label='Threshold (1.5)')
+    plt.axhline(-1.5, color='red', linestyle='--', linewidth=1)
+    plt.title('Z-Scores for Columns')
+    plt.xlabel('Index')
+    plt.ylabel('Z-Score')
+    plt.legend()
+    plt.show()
+    if save_path:
+        plt.savefig(save_path[0])
+        plt.close()
+
+    return None
+
+
+def df_ds_score_filtering(df_name, x_col_name, y_col_name, ds_score_tuner=0.01, log_base=10):
+    """filter data based on my custom Data Shadric statistic score filtering"""
+    # usage: df_ds_score_filtering(df, 'x_col', 'y_col', ds_score_tuner=0.01, log_base=10)
+    # input: df_name - pandas DataFrame, x_col_name - first column name, y_col_name - second column name, ds_score_tuner - score tuning parameter (lower = less filtering/more data retained), log_base - logarithm base for transformation (default: 10)
+    # output: filtered DataFrame with scores above the threshold
+
+    # Apply log transformation
+    df = df_name.copy() # dataset
+    x_max = df[x_col_name].max()
+    y_min = df[y_col_name].min()
+    x_normalised = (x_max - df[x_col_name]) / (x_max - df[x_col_name].min())
+    y_normalised = (df[y_col_name] - y_min) / (df[y_col_name].max() - y_min)
+    x_log_normalised = np.log1p(x_normalised) / np.log(log_base)
+    y_log_normalised = np.log1p(y_normalised) / np.log(log_base)
+    df[f"{x_col_name}_lognorm"] = x_log_normalised
+    df[f"{y_col_name}_lognorm"] = y_log_normalised
+
+    # Calculate Z-scores
+    ds_score = df[f"{x_col_name}_lognorm"] * df[f"{y_col_name}_lognorm"]
+
+    # Filter by ds-score of x_col only (first column of z_scores)
+    print(f"Applying DS-score filtering with threshold tuner: {ds_score_tuner}...")
+    mask = ds_score > (ds_score.max() * ds_score_tuner)  # Only use x_col Z-scores for filtering
+    df = df[mask]
+
+    # Drop intermediate log-normalised columns
+    df = datashadric.dataframing.df_drop_multicol(df, [f"{x_col_name}_lognorm", f"{y_col_name}_lognorm"])
+
+    return df

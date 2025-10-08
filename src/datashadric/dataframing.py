@@ -26,6 +26,19 @@ def df_print_row_and_columns(df_name):
     print("columns = {}".format(df_columns))
 
 
+def df_get_count_on_axis(df_name, axis: int):
+    """get the number of rows or columns in a dataframe"""
+    # usage: df_get_count_on_axis(df, axis=0) for rows or df_get_count_on_axis(df, axis=1) for columns
+    # input: df_name - pandas DataFrame, axis - 0 for rows, 1 for columns
+    # output: number of rows or columns in the DataFrame
+    try:
+        df_rows, df_columns = df_name.shape
+    except Exception as e:
+        df_rows, df_columns = df_name.to_frame().shape
+
+    return df_rows if axis == 0 else df_columns
+
+
 def df_check_na_values(df_name, *args):
     """check for missing values in dataframe columns"""
     # usage: df_check_na_values(df) or df_check_na_values(df, ['col1', 'col2'])

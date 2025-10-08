@@ -216,3 +216,10 @@ If you encounter any problems or have questions, please file an issue on the [Gi
 - Enhanced dataframe utilities
 - New functions for index and column name retrieval
 - Improved documentation and examples
+
+### Version: 0.1.3
+### Release Date: 8 October 2025
+- Minor bug fixes
+- Added print statements for better process tracking in data processing functions
+- Added for stochastic and machine learning based outlier detectio adn removal
+- Updated documentation

@@ -216,6 +216,7 @@ def ml_iforest_outlier_detection(df_name, col_list: list, contamination=0.1):
     
     return df_name[['outlier'] + col_list]
 
+
 def ml_lof_outlier_detection(df_name, col_list: list, n_neighbors=20, contamination=0.1):
     """detect outliers using Local Outlier Factor"""
     # usage: ml_lof_outlier_detection(df, ['col1', 'col2'], n_neighbors=20, contamination=0.1)
