@@ -18,11 +18,13 @@ import plotly.graph_objects as go
 # other plotters
 from statsmodels.nonparametric.smoothers_lowess import lowess
 
-def df_boxplotter(df_name, col_xplot, col_yplot, type_plot: int, *args):
+def df_boxplotter(df_name, col_xplot, col_yplot, type_plot: int, save_path=None, *args):
     """create box plot to visualize outliers. type_plot: 0 for dist, 1 for money, 2 for general"""
     # usage: df_boxplotter(df, 'col_x', 'col_y', type_plot=0, 'horizontalalignment')
     # input: df_name - pandas DataFrame, col_xplot - column name for x-axis, col_yplot - column name for y-axis, type_plot - type of plot (0 for dist, 1 for money, 2 for general), args - optional arguments for plot customization
+    # optional input: save_path - optional path to save the plot 
     # output: box plot figure
+    name_plot = "Boxplot_x-{}_y-{}.png".format(col_xplot, col_yplot)
     fig, ax = plt.subplots(figsize=(8, 6), dpi=100)
     sns.boxplot(x=df_name[col_xplot], y=df_name[col_yplot], ax=ax)
     plt.title('{} box plot to visualise outliers'.format(col_yplot))
@@ -38,15 +40,17 @@ def df_boxplotter(df_name, col_xplot, col_yplot, type_plot: int, *args):
         plt.xticks(rotation=0, horizontalalignment=args[0])
     
     ax.yaxis.grid(True)
-    plt.savefig("Boxplot_x-{}_y-{}.png".format(col_xplot, col_yplot))
+    if save_path:
+        plt.savefig(save_path)
     plt.show()
 
 
-def df_histplotter(df_name, col_plot, type_plot: int, bins=10, *args):
+def df_histplotter(df_name, col_plot, type_plot: int, bins=10, save_path=None, *args):
     """create histogram plot. type_plot: 0 for dist, 1 for money"""
     # usage: df_histplotter(df, 'col_name', type_plot=0, bins=20)
     # input: df_name - pandas DataFrame, col_plot - column name to plot, type_plot - type of plot (0 for dist, 1 for money), bins - number of bins
     # output: histogram figure
+    name_plot = "Histogram_{}.png".format(col_plot)
     fig, ax = plt.subplots(figsize=(8, 6), dpi=100)
     df_name[col_plot].hist(bins=bins, ax=ax)
     plt.title('{} histogram'.format(col_plot))
@@ -60,11 +64,12 @@ def df_histplotter(df_name, col_plot, type_plot: int, bins=10, *args):
     
     plt.ylabel('Frequency')
     ax.grid(True)
-    plt.savefig("Histogram_{}.png".format(col_plot))
+    if save_path:
+        plt.savefig(save_path)
     plt.show()
 
 
-def df_grouped_histplotter(df_name, col_groupby: str, col_plot: str, type_plot: int, bins=20):
+def df_grouped_histplotter(df_name, col_groupby: str, col_plot: str, type_plot: int, bins=20, save_path=None):
     """create grouped histogram plots"""
     # usage: df_grouped_histplotter(df, 'col_groupby', 'col_plot', type_plot=0, bins=20)
     # input: df_name - pandas DataFrame, col_groupby - column name to group by, col_plot - column name to plot, type_plot - type of plot (0 for dist, 1 for money), bins - number of bins
@@ -79,10 +84,12 @@ def df_grouped_histplotter(df_name, col_groupby: str, col_plot: str, type_plot: 
     plt.xlabel(col_plot)
     plt.ylabel('Frequency')
     plt.legend()
+    if save_path:
+        plt.savefig(save_path)
     plt.show()
 
 
-def df_grouped_barplotter(df_name, col_groupby: str, col_plot: str, type_plot: int):
+def df_grouped_barplotter(df_name, col_groupby: str, col_plot: str, type_plot: int, save_path=None):
     """create grouped bar plots"""
     # usage: df_grouped_barplotter(df, 'col_groupby', 'col_plot', type_plot=0)
     # input: df_name - pandas DataFrame, col_groupby - column name to group by, col_plot - column name to plot, type_plot - type of plot (0 for dist, 1 for money)
@@ -94,10 +101,12 @@ def df_grouped_barplotter(df_name, col_groupby: str, col_plot: str, type_plot: i
     plt.xlabel(col_groupby)
     plt.ylabel(col_plot)
     plt.xticks(rotation=45)
+    if save_path:
+        plt.savefig(save_path)
     plt.show()
 
 
-def df_scatterplotter(df_grouped, col_xplot, col_yplot):
+def df_scatterplotter(df_grouped, col_xplot, col_yplot, save_path=None):
     """create scatter plot between two variables"""
     # usage: df_scatterplotter(df, 'col_x', 'col_y')
     # input: df_grouped - pandas DataFrame with columns col_xplot and col_yplot
@@ -105,19 +114,23 @@ def df_scatterplotter(df_grouped, col_xplot, col_yplot):
     fig, ax = plt.subplots(figsize=(8, 6), dpi=100)
     df_grouped.plot.scatter(x=col_xplot, y=col_yplot, ax=ax)
     plt.title('Scatter plot: {} vs {}'.format(col_xplot, col_yplot))
+    if save_path:
+        plt.savefig(save_path)
     plt.show()
 
 
-def df_pairplot(df_name):
+def df_pairplot(df_name, save_path=None):
     """create pairplot for data exploration"""
     # usage: df_pairplot(df)
     # input: df - pandas DataFrame, with features to plot
     # output: pairplot figure
     sns.pairplot(df_name)
+    if save_path:
+        plt.savefig(save_path)
     plt.show()
 
 
-def df_heatmap(df_name, col_list: list):
+def df_heatmap(df_name, col_list: list, save_path=None):
     """create heatmap for correlation matrix"""
     # usage: df_heatmap(df, ['col1', 'col2', 'col3'])
     # input: df - pandas DataFrame, col_list - list of column names to include in correlation
@@ -126,10 +139,12 @@ def df_heatmap(df_name, col_list: list):
     plt.figure(figsize=(10, 8), dpi=100)
     sns.heatmap(corr, annot=True, fmt=".2f", cmap='coolwarm', square=True)
     plt.title('Correlation Heatmap')
+    if save_path:
+        plt.savefig(save_path)
     plt.show()
 
 
-def df_lowess_plotter(x, y, frac=0.1, title="LOWESS Smoothing"):
+def df_lowess_plotter(x, y, frac=0.1, title="LOWESS Smoothing", save_path=None):
     """create LOWESS smoothed plot"""
     # usage: df_lowess_plotter(x, y, frac=0.1)
     # input: x - array-like, y - array-like, frac - smoothing parameter
@@ -145,4 +160,22 @@ def df_lowess_plotter(x, y, frac=0.1, title="LOWESS Smoothing"):
     plt.ylabel('Y-axis')
     plt.legend()
     plt.grid(True)
+    if save_path:
+        plt.savefig(save_path)
     plt.show()
+
+
+def df_candlestick_plotter(df, title="Candlestick Chart", save_path=None):
+    """create candlestick plot for time series data"""
+    # usage: df_candlestick_plotter(df)
+    # input: df - pandas DataFrame with columns 'Date', 'Open', 'High', 'Low', 'Close'
+    # output: candlestick plot
+    fig = go.Figure(data=[go.Candlestick(x=df['Date'],
+                                         open=df['Open'],
+                                         high=df['High'],
+                                         low=df['Low'],
+                                         close=df['Close'])])
+    fig.update_layout(title=title, xaxis_title='Date', yaxis_title='Price')
+    if save_path:
+        fig.write_image(save_path)
+    fig.show()

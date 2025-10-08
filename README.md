@@ -193,7 +193,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-If you encounter any problems or have questions, please file an issue on the [GitHub repository](https://github.com/yourusername/datashadric/issues).
+If you encounter any problems or have questions, please file an issue on the [GitHub repository](https://github.com/diversecellar/datashadric.git).
 
 ## Changelog
 
@@ -222,4 +222,11 @@ If you encounter any problems or have questions, please file an issue on the [Gi
 - Minor bug fixes
 - Added print statements for better process tracking in data processing functions
 - Added for stochastic and machine learning based outlier detectio adn removal
+- Updated documentation
+
+### Version: 0.1.4
+### Release Date: 9 October 2025
+- Minor bug fixes
+- Minor enhancements to user optionality in many functions for mlearning, stochastics and dataframing modules
+- Added user optionality for saving plots to files in plotters module
 - Updated documentation

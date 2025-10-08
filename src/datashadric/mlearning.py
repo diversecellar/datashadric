@@ -69,7 +69,7 @@ def logr_classifier(df_name, log_regression_model: dict):
     }
 
 
-def logr_train_test_split(df_name, col_response, col_predictor, test_size: float):
+def logr_train_test_split(df_name, col_response, col_predictor, test_size: float, random_state=42):
     """split data for logistic regression training and testing"""
     # usage: logr_train_test_split(df, 'response_col', 'predictor_col', test_size=0.2)
     # input: df - pandas DataFrame, col_response - response column name, col_predictor - predictor column name, test_size - proportion of data to use for testing
@@ -78,7 +78,7 @@ def logr_train_test_split(df_name, col_response, col_predictor, test_size: float
     y = df_name[col_response]
     
     X_train, X_test, y_train, y_test = sklmodslct.train_test_split(
-        X, y, test_size=test_size, random_state=42
+        X, y, test_size=test_size, random_state=random_state
     )
     
     return {
@@ -89,7 +89,7 @@ def logr_train_test_split(df_name, col_response, col_predictor, test_size: float
     }
 
 
-def ml_train_test_split(df_name, col_target, test_size: float):
+def ml_train_test_split(df_name, col_target, test_size: float, random_state=42):
     """generic train test split for machine learning"""
     # usage: ml_train_test_split(df, 'target_col', test_size=0.2)
     # input: df - pandas DataFrame, col_target - target column name, test_size - proportion of data to use for testing
@@ -99,7 +99,7 @@ def ml_train_test_split(df_name, col_target, test_size: float):
     y = df_name[col_target]
     
     X_train, X_test, y_train, y_test = sklmodslct.train_test_split(
-        X, y, test_size=test_size, random_state=42
+        X, y, test_size=test_size, random_state=random_state
     )
     
     return {
@@ -204,12 +204,12 @@ def ml_naive_bayes_roc(naive_bayes_nm):
         'roc_auc': roc_auc
     }
 
-def ml_iforest_outlier_detection(df_name, col_list: list, contamination=0.1):
+def ml_iforest_outlier_detection(df_name, col_list: list, contamination=0.1, random_state=42):
     """detect outliers using Isolation Forest"""
     # usage: ml_iforest_outlier_detection(df, ['col1', 'col2'], contamination=0.1)
     # input: df - pandas DataFrame, col_list - list of column names to use for outlier detection, contamination - proportion of outliers in the data
     # output: DataFrame with outlier labels
-    iso_forest = IsolationForest(contamination=contamination, random_state=42)
+    iso_forest = IsolationForest(contamination=contamination, random_state=random_state)
     df_features = df_name[col_list]
     df_name['outlier'] = iso_forest.fit_predict(df_features)
     df_name['outlier'] = df_name['outlier'].map({1: 'inlier', -1: 'outlier'})
@@ -241,12 +241,12 @@ def ml_ks_score_evaluation(y_true, y_scores):
 
     return ks_score
 
-def ml_kmeans_clustering(df_name, col_list: list, n_clusters=3):
+def ml_kmeans_clustering(df_name, col_list: list, n_clusters=3, random_state=42):
     """perform k-means clustering"""
     # usage: ml_kmeans_clustering(df, ['col1', 'col2'], n_clusters=3)
     # input: df - pandas DataFrame, col_list - list of column names to use for clustering, n_clusters - number of clusters
     # output: DataFrame with cluster labels
-    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+    kmeans = KMeans(n_clusters=n_clusters, random_state=random_state)
     df_features = df_name[col_list]
     df_name['cluster'] = kmeans.fit_predict(df_features)
     print(f"K-Means Clustering: {n_clusters} clusters found.")
